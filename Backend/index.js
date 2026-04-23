@@ -1,18 +1,29 @@
-const connectToMongo = require('./db')
-connectToMongo();
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-const express = require('express')
-const app = express()
+dotenv.config();
 
-const cors = require('cors')
-const router = require('./Routes/router')
+const app = express();
 
-app.use(cors());
+// Middleware
 app.use(express.json());
-app.use(router);
 
-const port = process.env.PORT || 3001;
+// ✅ MongoDB Connection (FIXED)
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB Connected Successfully"))
+  .catch((err) => {
+    console.log("MongoDB Connection Error:", err);
+  });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+// ✅ Test route (fixes "Cannot GET /")
+app.get("/", (req, res) => {
+  res.send("Backend is running successfully 🚀");
+});
+
+// ✅ Start server (Render needs this)
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
